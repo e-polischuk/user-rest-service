@@ -6,7 +6,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -15,7 +14,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.test.framework.JerseyTest;
-import com.user.dao.H2UserDao;
 
 /**
  * Integration tests for this web application is run in the test container.
@@ -43,11 +41,6 @@ public class UserServiceTest extends JerseyTest {
     
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    @AfterClass
-    public static void end() {
-	UserService.changeDaoTo(H2UserDao.class);
-    }
 
     @Test
     public void save() throws JSONException {

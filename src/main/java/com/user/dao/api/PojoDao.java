@@ -1,4 +1,4 @@
-package com.user.dao;
+package com.user.dao.api;
 
 import java.util.List;
 

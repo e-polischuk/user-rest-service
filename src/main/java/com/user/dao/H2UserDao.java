@@ -1,6 +1,5 @@
 package com.user.dao;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +9,8 @@ import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.user.dao.api.PojoDaoFactory;
 
 /**
  * Configures {@link AbstractUserDao} for embedded database H2.
@@ -33,7 +34,7 @@ public class H2UserDao extends AbstractUserDao {
     
     /**
      * The embedded database H2 no support actual stored procedures, 
-     * so this method imitates it for {@link CallableStatement} work.
+     * so this method imitates it for {@code CallableStatement} work.
      * 
      * @param name
      * @param surname

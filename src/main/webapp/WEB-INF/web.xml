@@ -21,7 +21,7 @@
 		</init-param>
 		<init-param>
 			<param-name>jersey.config.server.provider.classnames</param-name>
-			<param-value>com.user.dao.PojoDaoFactory</param-value>
+			<param-value>com.user.dao.api.PojoDaoFactory</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>

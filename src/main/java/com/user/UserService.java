@@ -15,27 +15,23 @@ import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.sun.jersey.spi.resource.Singleton;
 import com.user.dao.H2UserDao;
-import com.user.dao.PojoDao;
-import com.user.dao.PojoDaoFactory;
+import com.user.dao.api.PojoDao;
+import com.user.dao.api.PojoDaoFactory;
 import com.user.pojo.User;
 
 /**
- * Handles User CRUD requests of client's side. As this web application is
- * simple as UserService's scope is a singleton.
+ * Handles User CRUD requests of client's side.
  * 
  * @author e-polischuk
  *
  */
 @Path("")
-@Singleton
 public class UserService {
     private static final Logger logger = LogManager.getLogger(UserService.class);
     /**
-     * DAO for User POJO. As this web application is simple, the PojoDaoFactory
-     * provides PojoDao api with a single connection to the database,
-     * independently UserService is a singleton or not.
+     * DAO for User POJO. The PojoDaoFactory provides PojoDao api
+     * with a single connection to the database.
      */
     private static PojoDao<User, Integer> dao = PojoDaoFactory.open(H2UserDao.class);
 
@@ -45,7 +41,7 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     public User save(User user) {
 	user = dao.save(user);
-	if (user != null)
+	if (user != null && user.getId() > 0)
 	    logger.info("SAVED: " + user.toString());
 	return user;
     }
@@ -70,7 +66,7 @@ public class UserService {
     public void update(User user) {
 	User before = dao.findOne(user.getId());
 	dao.update(user);
-	if (before != null && dao != null)
+	if (before != null)
 	    logger.info(before.toString() + " WAS UPDATED TO " + user.toString());
     }
 
@@ -78,7 +74,7 @@ public class UserService {
     @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
     public void delete(User user) {
-	if (user != null) {
+	if (user != null && user.getId() > 0) {
 	    dao.delete(user.getId());
 	    if (dao.findOne(user.getId()) == null)
 		logger.info(user.toString() + " WAS SUCCESSFULLY DELETED!");
@@ -93,7 +89,7 @@ public class UserService {
      * @param pojoDaoClass is class type of new dao
      */
     public static void changeDaoTo(Class<?> pojoDaoClass) {
-	logger.info(dao.getClass() + " was replaced by this new - " + pojoDaoClass);
+	logger.info(dao.getClass() + " was replaced with the new - " + pojoDaoClass);
 	PojoDaoFactory.remove(dao.getClass());
 	dao = PojoDaoFactory.open(pojoDaoClass);
     }

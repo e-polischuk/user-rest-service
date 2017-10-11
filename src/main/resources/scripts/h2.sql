@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS users
 	usr_surname VARCHAR(30) NOT NULL,
 	PRIMARY KEY (id)
 );
-DROP ALIAS IF EXISTS create;
-CREATE ALIAS createUser FOR "com.user.dao.H2UserDao.saveUser";
+DROP ALIAS IF EXISTS saveUser;
+CREATE ALIAS saveUser FOR "com.user.dao.H2UserDao.saveUser";
 INSERT INTO users (usr_name, usr_surname) VALUES('Ivan', 'Petrov');
 INSERT INTO users (usr_name, usr_surname) VALUES('Van', 'Lee');
 INSERT INTO users (usr_name, usr_surname) VALUES('Tom', 'Smith');

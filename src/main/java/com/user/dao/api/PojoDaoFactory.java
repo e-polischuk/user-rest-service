@@ -1,4 +1,4 @@
-package com.user.dao;
+package com.user.dao.api;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -11,8 +11,8 @@ import com.sun.jersey.spi.resource.Singleton;
 /**
  * Alternatively to injection by web container, this own factory
  * is available for instances of {@link PojoDao} implementations.
- * It is configured in web.xml as provider for integration
- * testing container, so it is set to a singleton.
+ * It is configured in web.xml as provider. Factory scope must be
+ * a singleton.
  * 
  * @author e-polischuk
  *
@@ -67,7 +67,5 @@ public class PojoDaoFactory {
 	}
 	return false;
     }
-
-
-
+    
 }

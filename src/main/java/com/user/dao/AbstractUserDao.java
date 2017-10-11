@@ -15,6 +15,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.user.dao.api.PojoDao;
 import com.user.pojo.User;
 
 import jersey.repackaged.org.objectweb.asm.Type;
@@ -124,11 +125,11 @@ public abstract class AbstractUserDao implements PojoDao<User, Integer> {
 	if (connection != null) {
 	    try {
 		connection.close();
+		logger.info("ALL CONNECTIONS TO DB WERE CLOSED!");
 	    } catch (SQLException e) {
 		logger.error(e);
 	    }
 	}
-
     }
 
 }
