@@ -6,6 +6,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -14,6 +15,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.test.framework.JerseyTest;
+import com.user.dao.api.PojoDaoFactory;
 
 /**
  * Integration tests for this web application is run in the test container.
@@ -41,6 +43,11 @@ public class UserServiceTest extends JerseyTest {
     
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    
+    @AfterClass
+    public static void closeResources() {
+	PojoDaoFactory.clearCache();
+    }
 
     @Test
     public void save() throws JSONException {

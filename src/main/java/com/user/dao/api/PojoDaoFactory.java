@@ -34,7 +34,7 @@ public class PojoDaoFactory {
      * @return an instance of the pojoDaoClass type
      */
     @SuppressWarnings("unchecked")
-    public synchronized static <T, ID> PojoDao<T, ID> open(Class<?> pojoDaoClass) {
+    public synchronized static <T, ID> PojoDao<T, ID> get(Class<?> pojoDaoClass) {
 	PojoDao<T, ID> pojoDao = (PojoDao<T, ID>) daoCache.get(pojoDaoClass);
 	if (pojoDao != null)
 	    return pojoDao;
@@ -58,7 +58,7 @@ public class PojoDaoFactory {
      *         else - {@code false}
      */
     @SuppressWarnings("unchecked")
-    public synchronized static <T, ID> boolean remove(Class<?> pojoDaoClass) {
+    public synchronized static <T, ID> boolean close(Class<?> pojoDaoClass) {
 	PojoDao<T, ID> pojoDao = (PojoDao<T, ID>) daoCache.remove(pojoDaoClass);
 	if (pojoDao != null) {
 	    pojoDao.close();
@@ -66,6 +66,16 @@ public class PojoDaoFactory {
 	    return true;
 	}
 	return false;
+    }
+    
+    /**
+     * Closes all connections of all DAOs those there are in {@code daoCache}
+     * and clears {@code daoCache}.
+     */
+    @SuppressWarnings("rawtypes")
+    public synchronized static void clearCache() {
+	daoCache.values().forEach(obj -> ((PojoDao) obj).close());
+	daoCache.clear();
     }
     
 }

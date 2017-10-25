@@ -33,7 +33,7 @@ public class UserService {
      * DAO for User POJO. The PojoDaoFactory provides PojoDao api
      * with a single connection to the database.
      */
-    private static PojoDao<User, Integer> dao = PojoDaoFactory.open(H2UserDao.class);
+    private static PojoDao<User, Integer> dao = PojoDaoFactory.get(H2UserDao.class);
 
     @POST
     @Path("new")
@@ -90,8 +90,8 @@ public class UserService {
      */
     public static void changeDaoTo(Class<?> pojoDaoClass) {
 	logger.info(dao.getClass() + " was replaced with the new - " + pojoDaoClass);
-	PojoDaoFactory.remove(dao.getClass());
-	dao = PojoDaoFactory.open(pojoDaoClass);
+	PojoDaoFactory.close(dao.getClass());
+	dao = PojoDaoFactory.get(pojoDaoClass);
     }
 
 }

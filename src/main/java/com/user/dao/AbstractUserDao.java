@@ -57,25 +57,27 @@ public abstract class AbstractUserDao implements PojoDao<User, Integer> {
     }
 
     @Override
-    public User findOne(Integer id) {
+    public synchronized User findOne(Integer id) {
+	User user = null;
 	try(PreparedStatement pstmt = connection.prepareStatement($("findOne"))) {
 	    pstmt.setInt(1, id);
-	    ResultSet rs = pstmt.executeQuery();
-	    if (rs.next())
-		return new User(rs.getInt($("id")), rs.getString($("name")), rs.getString($("surname")));
+	    try(ResultSet rs = pstmt.executeQuery()) {
+		if (rs.next())
+		    user = new User(rs.getInt($("id")), rs.getString($("name")), rs.getString($("surname")));
+	    }
 	} catch (SQLException e) {
 	    logger.error(e);
 	}
-	return null;
+	return user;
     }
 
     @Override
-    public List<User> findAll() {
+    public synchronized List<User> findAll() {
 	List<User> users = new ArrayList<>();
 	try(Statement stmt = connection.createStatement()) {
-	    ResultSet rs = stmt.executeQuery($("findAll"));
-	    while (rs.next()) {
-		users.add(new User(rs.getInt($("id")), rs.getString($("name")), rs.getString($("surname"))));
+	    try(ResultSet rs = stmt.executeQuery($("findAll"))) {
+		while (rs.next()) 
+		    users.add(new User(rs.getInt($("id")), rs.getString($("name")), rs.getString($("surname"))));
 	    }
 	} catch (SQLException e) {
 	    logger.error(e);
@@ -84,7 +86,7 @@ public abstract class AbstractUserDao implements PojoDao<User, Integer> {
     }
 
     @Override
-    public User save(User pojo) {
+    public synchronized User save(User pojo) {
 	try(CallableStatement cstmt = connection.prepareCall($("save"))) {
 	    cstmt.setString(2, pojo.getName());
 	    cstmt.setString(3, pojo.getSurname());
@@ -99,19 +101,31 @@ public abstract class AbstractUserDao implements PojoDao<User, Integer> {
     }
 
     @Override
-    public void update(User pojo) {
+    public synchronized void update(User pojo) {
 	try(PreparedStatement pstmt = connection.prepareStatement($("update"))) {
+	    connection.setAutoCommit(false);
 	    pstmt.setString(1, pojo.getName());
 	    pstmt.setString(2, pojo.getSurname());
 	    pstmt.setInt(3, pojo.getId());
 	    pstmt.executeUpdate();
+	    connection.commit();
 	} catch (SQLException e) {
 	    logger.error(e);
+	    try {
+		connection.rollback();
+	    } catch (SQLException e1) {
+		logger.error(e1);
+	    }
+	}
+	try {
+	    connection.setAutoCommit(true);
+	} catch (SQLException e2) {
+	    logger.error(e2);
 	}
     }
 
     @Override
-    public void delete(Integer id) {
+    public synchronized void delete(Integer id) {
 	try(PreparedStatement pstmt = connection.prepareStatement($("delete"))) {
 	    pstmt.setInt(1, id);
 	    pstmt.executeUpdate();
@@ -121,7 +135,7 @@ public abstract class AbstractUserDao implements PojoDao<User, Integer> {
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
 	if (connection != null) {
 	    try {
 		connection.close();
